@@ -1,33 +1,4 @@
--- TICKET-ADV009 — Sample JSONB payloads
-UPDATE instruments SET metadata = '{
-  "sector": "Technology",
-  "exchange": "XETR",
-  "issuer": {"name": "SAP SE", "country": "DE", "lei": "529900D6BF99LW9R2E68"},
-  "rating": {"sp": "AA-", "moody": "Aa3"},
-  "tags": ["DAX40", "ESG-tier-1"]
-}'::JSONB WHERE symbol = 'SAP.DE';
 
-UPDATE instruments SET metadata = '{
-  "sector": "Energy",
-  "underlying": "WTI",
-  "contractSize": 1000,
-  "expiryMonth": "2026-12",
-  "tags": ["futures", "physical-settlement"]
-}'::JSONB WHERE symbol = 'CL_FUT';
-
--- Containment (uses GIN):
-SELECT symbol, metadata->>'sector' AS sector
-FROM instruments
-WHERE metadata @> '{"sector": "Technology"}';
-
--- Path extraction:
-SELECT symbol, metadata->'issuer'->>'country' AS country FROM instruments;
-
--- Array membership:
-SELECT symbol FROM instruments WHERE metadata->'tags' ? 'DAX40';
-
--- Existence:
-SELECT symbol FROM instruments WHERE metadata ? 'rating';
 
 -- TICKET-ADV017: Deterministic seed data (dev/test only)
 -- 10 counterparties, 50 instruments, 500 trades spread across 4 monthly partitions
@@ -45,13 +16,13 @@ INSERT INTO counterparties (id, name, lei_code, region) VALUES
     (9,  'Andes Capital Group',   'LEI0000000000000009', 'LATAM'),
     (10, 'Cordillera Trading',    'LEI0000000000000010', 'LATAM');
 
--- 2. Instruments: 5 explicit (one per asset class) + 45 generated
+-- 2. Instruments: 5 explicit (one per asset class, including the two ADV009 needs) + 45 generated
 INSERT INTO instruments (id, symbol, name, asset_class, currency, isin) VALUES
-    (1, 'AAPL',  'Apple Inc',              'Equity',     'USD', 'US0000000001'),
-    (2, 'UST10',  'US Treasury 10Y',       'Bond',       'USD', 'US0000000002'),
-    (3, 'EURUSD', 'Euro / US Dollar',      'FX',         'USD', 'US0000000003'),
-    (4, 'XAU',    'Gold Spot',             'Commodity',  'USD', 'US0000000004'),
-    (5, 'ESZ26',  'E-mini S&P 500 Future', 'Derivative', 'USD', 'US0000000005');
+    (1, 'SAP.DE', 'SAP SE',                 'Equity',     'EUR', 'DE0007164600'),
+    (2, 'UST10',  'US Treasury 10Y',        'Bond',       'USD', 'US0000000002'),
+    (3, 'EURUSD', 'Euro / US Dollar',       'FX',         'USD', 'US0000000003'),
+    (4, 'CL_FUT', 'WTI Crude Oil Future',   'Commodity',  'USD', 'US0000000004'),
+    (5, 'ESZ26',  'E-mini S&P 500 Future',  'Derivative', 'USD', 'US0000000005');
 
 INSERT INTO instruments (id, symbol, name, asset_class, currency, isin)
 SELECT
@@ -86,7 +57,7 @@ SELECT
 FROM trades
 WHERE id IN (7, 23, 89, 154, 201, 267, 333, 410, 478, 499);
 
--- 5. Verification queries (run these after seeding)
+-- 5. Verification queries
 SELECT count(*) FROM counterparties;   -- expect 10
 SELECT count(*) FROM instruments;      -- expect 50
 SELECT count(*) FROM trades;           -- expect 500
@@ -94,3 +65,34 @@ SELECT count(*), DATE_TRUNC('month', trade_date) AS month
 FROM trades
 GROUP BY 2
 ORDER BY 2;                             -- expect ~125 per month
+
+-- TICKET-ADV009: Sample JSONB payloads (runs after seed data, so symbols now exist)
+UPDATE instruments SET metadata = '{
+  "sector": "Technology",
+  "exchange": "XETR",
+  "issuer": {"name": "SAP SE", "country": "DE", "lei": "529900D6BF99LW9R2E68"},
+  "rating": {"sp": "AA-", "moody": "Aa3"},
+  "tags": ["DAX40", "ESG-tier-1"]
+}'::JSONB WHERE symbol = 'SAP.DE';
+
+UPDATE instruments SET metadata = '{
+  "sector": "Energy",
+  "underlying": "WTI",
+  "contractSize": 1000,
+  "expiryMonth": "2026-12",
+  "tags": ["futures", "physical-settlement"]
+}'::JSONB WHERE symbol = 'CL_FUT';
+
+-- Containment (uses GIN):
+SELECT symbol, metadata->>'sector' AS sector
+FROM instruments
+WHERE metadata @> '{"sector": "Technology"}';
+
+-- Path extraction:
+SELECT symbol, metadata->'issuer'->>'country' AS country FROM instruments;
+
+-- Array membership:
+SELECT symbol FROM instruments WHERE metadata->'tags' ? 'DAX40';
+
+-- Existence:
+SELECT symbol FROM instruments WHERE metadata ? 'rating';
