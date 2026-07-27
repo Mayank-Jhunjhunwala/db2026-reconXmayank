@@ -1,4 +1,10 @@
-# TICKET-ADV006 — ER model (8 entities)
+# ReconX Entity-Relationship Diagram (ERD)
+
+This document defines the core 8-entity database schema for the **ReconX** platform. It serves as the primary reference for database partitioning (TICKET-ADV007), JSONB column structures (TICKET-ADV009), soft deletes (TICKET-ADV067), and foreign key join paths across services.
+
+---
+
+## ER Diagram (Mermaid)
 
 ```mermaid
 erDiagram
@@ -24,7 +30,7 @@ erDiagram
         varchar asset_class
         char currency
         char isin UK
-        jsonb metadata "ADV009"
+        jsonb metadata "TICKET-ADV009"
     }
 
     TRADES {
@@ -36,9 +42,9 @@ erDiagram
         varchar side
         numeric quantity
         numeric price
-        date trade_date "PARTITION KEY (ADV007)"
+        date trade_date "PARTITION KEY (TICKET-ADV007)"
         varchar status
-        timestamp deleted_at "ADV067 soft delete"
+        timestamp deleted_at "TICKET-ADV067 soft delete"
         timestamp created_at
         timestamp modified_at
     }
@@ -93,3 +99,15 @@ erDiagram
         timestamp created_at
     }
 ```
+
+---
+
+## Entity Details & Special Annotations
+
+1. **`TRADES`**:
+   - **`trade_date`**: Partition key for range partitioning by date (`TICKET-ADV007`).
+   - **`deleted_at`**: Supports soft-delete semantics (`TICKET-ADV067`).
+2. **`INSTRUMENTS`**:
+   - **`metadata`**: `jsonb` field indexed using GIN (`jsonb_path_ops`) for flexible containment queries (`TICKET-ADV009`).
+3. **`AUDIT_LOG`**:
+   - Tracks mutations across trade lifecycle events and user actions.
