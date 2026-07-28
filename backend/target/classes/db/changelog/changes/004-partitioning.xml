@@ -1,0 +1,43 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+  xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="020-partitioned-trades-table" author="trainer">
+        <preConditions onFail="MARK_RAN">
+            <dbms type="postgresql"/>
+            <not>
+                <tableExists tableName="trades"/>
+            </not>
+        </preConditions>
+        <sql>
+            CREATE TABLE trades (
+                id BIGINT NOT NULL,
+                trade_ref VARCHAR(100) NOT NULL,
+                trade_date DATE NOT NULL,
+                counterparty_id BIGINT NOT NULL,
+                instrument_id BIGINT NOT NULL,
+                side VARCHAR(10) NOT NULL,
+                quantity DECIMAL(18, 4) NOT NULL,
+                price DECIMAL(18, 4) NOT NULL,
+                status VARCHAR(50) NOT NULL,
+                created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+                PRIMARY KEY (id, trade_date)
+            ) PARTITION BY RANGE (trade_date);
+
+            CREATE TABLE trades_y2026m04 PARTITION OF trades
+                FOR VALUES FROM ('2026-04-01') TO ('2026-05-01');
+            CREATE TABLE trades_y2026m05 PARTITION OF trades
+                FOR VALUES FROM ('2026-05-01') TO ('2026-06-01');
+            CREATE TABLE trades_y2026m06 PARTITION OF trades
+                FOR VALUES FROM ('2026-06-01') TO ('2026-07-01');
+            CREATE TABLE trades_y2026m07 PARTITION OF trades
+                FOR VALUES FROM ('2026-07-01') TO ('2026-08-01');
+        </sql>
+        <rollback>
+            DROP TABLE IF EXISTS trades CASCADE;
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>
