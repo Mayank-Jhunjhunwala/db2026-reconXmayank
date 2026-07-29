@@ -100,4 +100,13 @@ public final class DerivativeTrade implements TradeType {
             return new DerivativeTrade(this);
         }
     }
+    @Override public boolean equals(Object o) {
+        return (o instanceof DerivativeTrade other) && tradeRef.equals(other.tradeRef);
+    }
+    @Override public int hashCode() { return tradeRef.hashCode(); }
+    @Override public String toString() {
+        return "DerivativeTrade[ref=%s, %s %s on %s, strike=%s %s, qty=%s, expiry=%s, side=%s]"
+                .formatted(tradeRef, optionType, underlying, tradeDate, strike,
+                           currency.getCurrencyCode(), quantity, expiry, side);
+    }
 }
