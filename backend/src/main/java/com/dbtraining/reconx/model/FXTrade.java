@@ -1,4 +1,4 @@
-﻿package com.dbtraining.reconx.model;
+package com.dbtraining.reconx.model;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -36,7 +36,9 @@ public final class FXTrade implements TradeType {
     @Override public TradeRef tradeRef()     { return tradeRef; }
     @Override public LocalDate tradeDate()   { return tradeDate; }
     @Override public AssetClass assetClass() { return AssetClass.FX; }
-    @Override public Money notional()        { return new Money(notionalCcy1.multiply(fxRate), ccy2); }
+    @Override public Money notional() {
+        return new Money(notionalCcy1.multiply(fxRate), ccy2);
+    }
 
     public Currency ccy1()           { return ccy1; }
     public Currency ccy2()           { return ccy2; }
@@ -44,6 +46,19 @@ public final class FXTrade implements TradeType {
     public BigDecimal fxRate()       { return fxRate; }
     public Side side()               { return side; }
     public long counterpartyId()     { return counterpartyId; }
+
+    @Override public boolean equals(Object o) {
+        return o instanceof FXTrade fx && this.tradeRef.equals(fx.tradeRef);
+    }
+
+    @Override public int hashCode() {
+        return Objects.hash(tradeRef);
+    }
+
+    @Override public String toString() {
+        return "FXTrade[ref=%s, %s/%s, notional=%s %s, rate=%s, side=%s]"
+                .formatted(tradeRef, ccy1, ccy2, notionalCcy1, ccy1, fxRate, side);
+    }
 
     public static final class Builder {
         private TradeRef tradeRef;
@@ -63,24 +78,15 @@ public final class FXTrade implements TradeType {
         public Builder counterpartyId(long val)      { this.counterpartyId = val; return this; }
 
         public FXTrade build() {
-            Objects.requireNonNull(tradeRef,     "tradeRef");
-            Objects.requireNonNull(ccy1,         "ccy1");
-            Objects.requireNonNull(ccy2,         "ccy2");
+            Objects.requireNonNull(tradeRef, "tradeRef");
+            Objects.requireNonNull(ccy1, "ccy1");
+            Objects.requireNonNull(ccy2, "ccy2");
             Objects.requireNonNull(notionalCcy1, "notionalCcy1");
-            Objects.requireNonNull(fxRate,       "fxRate");
-            Objects.requireNonNull(side,         "side");
-            Objects.requireNonNull(tradeDate,    "tradeDate");
-
-            if (ccy1.equals(ccy2)) {
-                throw new IllegalStateException("ccy1 and ccy2 must differ");
-            }
-            if (notionalCcy1.signum() <= 0) {
-                throw new IllegalStateException("notionalCcy1 must be > 0");
-            }
-            if (fxRate.signum() <= 0) {
-                throw new IllegalStateException("fxRate must be > 0");
-            }
-
+            Objects.requireNonNull(fxRate, "fxRate");
+            Objects.requireNonNull(side, "side");
+            Objects.requireNonNull(tradeDate, "tradeDate");
+            if (ccy1.equals(ccy2)) throw new IllegalStateException("ccy1 must differ from ccy2");
+            if (fxRate.signum() <= 0) throw new IllegalStateException("fxRate must be > 0");
             return new FXTrade(this);
         }
     }

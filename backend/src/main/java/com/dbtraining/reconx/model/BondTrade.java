@@ -1,4 +1,4 @@
-﻿package com.dbtraining.reconx.model;
+package com.dbtraining.reconx.model;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -38,7 +38,9 @@ public final class BondTrade implements TradeType {
     @Override public TradeRef tradeRef()     { return tradeRef; }
     @Override public LocalDate tradeDate()   { return tradeDate; }
     @Override public AssetClass assetClass() { return AssetClass.BOND; }
-    @Override public Money notional()        { return new Money(faceValue, currency); }
+    @Override public Money notional() {
+        return new Money(faceValue, currency);
+    }
 
     public String isin()             { return isin; }
     public BigDecimal faceValue()    { return faceValue; }
@@ -47,6 +49,18 @@ public final class BondTrade implements TradeType {
     public Currency currency()       { return currency; }
     public Side side()               { return side; }
     public long counterpartyId()     { return counterpartyId; }
+
+    @Override public boolean equals(Object o) {
+        return o instanceof BondTrade bt && this.tradeRef.equals(bt.tradeRef);
+    }
+
+    @Override public int hashCode() {
+        return Objects.hash(tradeRef);
+    }
+
+    @Override public String toString() {
+        return "BondTrade{tradeRef=" + tradeRef + ", isin='" + isin + "'}";
+    }
 
     public static final class Builder {
         private TradeRef tradeRef;

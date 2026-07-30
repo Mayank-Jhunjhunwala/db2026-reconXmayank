@@ -1,4 +1,4 @@
-﻿package com.dbtraining.reconx.model;
+package com.dbtraining.reconx.model;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -43,7 +43,9 @@ public final class DerivativeTrade implements TradeType {
     @Override public TradeRef tradeRef()     { return tradeRef; }
     @Override public LocalDate tradeDate()   { return tradeDate; }
     @Override public AssetClass assetClass() { return AssetClass.DERIVATIVE; }
-    @Override public Money notional()        { return new Money(strike.multiply(quantity), currency); }
+    @Override public Money notional() {
+        return new Money(strike.multiply(quantity), currency);
+    }
 
     public String underlying()       { return underlying; }
     public BigDecimal strike()       { return strike; }
@@ -53,6 +55,18 @@ public final class DerivativeTrade implements TradeType {
     public Currency currency()       { return currency; }
     public Side side()               { return side; }
     public long counterpartyId()     { return counterpartyId; }
+
+    @Override public boolean equals(Object o) {
+        return o instanceof DerivativeTrade dt && this.tradeRef.equals(dt.tradeRef);
+    }
+
+    @Override public int hashCode() {
+        return Objects.hash(tradeRef);
+    }
+
+    @Override public String toString() {
+        return "DerivativeTrade{" + "tradeRef=" + tradeRef + ", underlying='" + underlying + '\'' + '}';
+    }
 
     public static final class Builder {
         private TradeRef tradeRef;
@@ -77,15 +91,15 @@ public final class DerivativeTrade implements TradeType {
         public Builder counterpartyId(long val)      { this.counterpartyId = val; return this; }
 
         public DerivativeTrade build() {
-            Objects.requireNonNull(tradeRef,   "tradeRef");
+            Objects.requireNonNull(tradeRef, "tradeRef");
             Objects.requireNonNull(underlying, "underlying");
-            Objects.requireNonNull(strike,     "strike");
-            Objects.requireNonNull(quantity,   "quantity");
-            Objects.requireNonNull(expiry,     "expiry");
+            Objects.requireNonNull(strike, "strike");
+            Objects.requireNonNull(quantity, "quantity");
+            Objects.requireNonNull(expiry, "expiry");
             Objects.requireNonNull(optionType, "optionType");
-            Objects.requireNonNull(currency,   "currency");
-            Objects.requireNonNull(side,       "side");
-            Objects.requireNonNull(tradeDate,  "tradeDate");
+            Objects.requireNonNull(currency, "currency");
+            Objects.requireNonNull(side, "side");
+            Objects.requireNonNull(tradeDate, "tradeDate");
 
             if (strike.signum() <= 0) {
                 throw new IllegalStateException("strike must be > 0");
@@ -94,7 +108,7 @@ public final class DerivativeTrade implements TradeType {
                 throw new IllegalStateException("quantity must be > 0");
             }
             if (expiry.isBefore(tradeDate)) {
-                throw new IllegalStateException("expiry cannot be before tradeDate");
+                throw new IllegalStateException("expiry must not be before tradeDate");
             }
 
             return new DerivativeTrade(this);

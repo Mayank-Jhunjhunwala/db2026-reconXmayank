@@ -1,4 +1,4 @@
-﻿package com.dbtraining.reconx.model;
+package com.dbtraining.reconx.model;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -40,6 +40,21 @@ public final class EquityTrade implements TradeType {
     public Currency currency()        { return currency; }
     public Side side()                { return side; }
     public long counterpartyId()      { return counterpartyId; }
+
+    @Override
+    public boolean equals(Object o) {
+        return o instanceof EquityTrade et && this.tradeRef.equals(et.tradeRef);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(tradeRef);
+    }
+
+    @Override
+    public String toString() {
+        return "EquityTrade{tradeRef=" + tradeRef + ", instrument='" + instrumentSymbol + "'}";
+    }
 
     public static final class Builder {
         private TradeRef tradeRef;
