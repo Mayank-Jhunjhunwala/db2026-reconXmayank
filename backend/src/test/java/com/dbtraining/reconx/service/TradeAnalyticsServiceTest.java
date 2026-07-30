@@ -43,4 +43,16 @@ class TradeAnalyticsServiceTest {
     void vwapByInstrument_emptyReturnsEmpty() {
         assertThat(service.vwapByInstrument(List.of())).isEmpty();
     }
+
+    @Test
+    void pnlByInstrument_mixedBuySell() {
+        var buy = EquityTrade.builder().tradeRef(TradeRef.of("EQU-20260603-0020")).instrumentSymbol("SAP.DE")
+                .price(new BigDecimal("100")).quantity(new BigDecimal("10")).currency("EUR")
+                .side(Side.BUY).tradeDate(LocalDate.of(2026,6,3)).counterpartyId(1L).build();
+        var sell = EquityTrade.builder().tradeRef(TradeRef.of("EQU-20260603-0021")).instrumentSymbol("SAP.DE")
+                .price(new BigDecimal("110")).quantity(new BigDecimal("10")).currency("EUR")
+                .side(Side.SELL).tradeDate(LocalDate.of(2026,6,3)).counterpartyId(1L).build();
+        var result = service.pnlByInstrument(List.of(buy, sell));
+        assertThat(result.get("SAP.DE")).isEqualByComparingTo(new BigDecimal("100"));
+    }
 }
