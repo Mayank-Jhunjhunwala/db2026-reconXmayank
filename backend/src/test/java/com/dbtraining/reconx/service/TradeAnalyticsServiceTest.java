@@ -30,4 +30,17 @@ class TradeAnalyticsServiceTest {
                 .currency("EUR").side(Side.BUY)
                 .tradeDate(LocalDate.of(2026, 6, 3)).counterpartyId(cpId).build();
     }
+
+    @Test
+    void vwapByInstrument_computesCorrectly() {
+        var t1 = equity("EQU-20260603-0010", "100.00", "100", 1L);
+        var t2 = equity("EQU-20260603-0011", "110.00", "200", 1L);
+        var result = service.vwapByInstrument(List.of(t1, t2));
+        assertThat(result.get("SAP.DE")).isEqualByComparingTo(new BigDecimal("106.6667"));
+    }
+
+    @Test
+    void vwapByInstrument_emptyReturnsEmpty() {
+        assertThat(service.vwapByInstrument(List.of())).isEmpty();
+    }
 }
