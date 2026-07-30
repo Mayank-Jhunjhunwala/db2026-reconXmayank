@@ -1,4 +1,4 @@
-﻿package com.dbtraining.reconx.model;
+package com.dbtraining.reconx.model;
 
 import java.time.LocalDate;
 
