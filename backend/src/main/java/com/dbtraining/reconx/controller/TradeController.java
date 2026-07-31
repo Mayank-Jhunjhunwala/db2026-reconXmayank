@@ -17,6 +17,9 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 
 import java.net.URI;
 import java.time.LocalDate;
@@ -91,5 +94,16 @@ public ResponseEntity<Void> delete(@PathVariable Long id,
                                    @AuthenticationPrincipal Object principal) {
     service.softDelete(id, String.valueOf(principal));
     return ResponseEntity.noContent().build();
+}
+
+    @Deprecated(since = "v1.4.0", forRemoval = true)
+@GetMapping(value = "/old-search", produces = MediaType.APPLICATION_JSON_VALUE)
+@Operation(summary = "Deprecated — use GET /v1/trades instead", deprecated = true)
+public ResponseEntity<Void> oldSearch(HttpServletResponse response) {
+    response.setHeader("Deprecation", "true");
+    response.setHeader("Sunset", "Sat, 1 Jul 2026 00:00:00 GMT");
+    response.setHeader("Link",
+            "</api/v1/trades?status=...>; rel=\"successor-version\"");
+    return ResponseEntity.status(HttpStatus.GONE).build();
 }
 }
