@@ -61,6 +61,22 @@ public class TradeService {
         //   their repos (throw TradeNotFoundException on miss), status = "PENDING",
         //   save, then:
         //     - metrics.incrementTradeCreated() + metrics.recordTradeValue(qty*price) — TICKET-ADV083
+        Trade t = new Trade();
+
+        // set fields on t
+        t.setQuantity(req.getQuantity());
+        t.setPrice(req.getPrice());
+        t.setStatus("PENDING");
+
+        Trade saved = tradeRepo.save(t);
+
+        // TICKET-ADV083
+        metrics.incrementTradeCreated();
+        metrics.recordTradeValue(
+                saved.getQuantity()
+                     .multiply(saved.getPrice())
+                     .doubleValue()
+        );
         //     - events.publish(new TradeEvent(... TRADE_CREATED ... actor ...)) — TICKET-ADV129
         throw new UnsupportedOperationException("TICKET-ADV064");
     }

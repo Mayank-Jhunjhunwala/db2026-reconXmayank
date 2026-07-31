@@ -1,27 +1,47 @@
-package com.dbtraining.reconx.service;
+package com.dbtraining.reconx.config;
 
-import com.dbtraining.reconx.exception.InvalidTradeException;
-import com.dbtraining.reconx.repository.InstrumentRepository;
-import com.dbtraining.reconx.repository.entity.Instrument;
-import org.springframework.cache.annotation.Cacheable;
-import org.springframework.stereotype.Service;
+import com.github.benmanes.caffeine.cache.Caffeine;
+import org.springframework.cache.CacheManager;
+import org.springframework.cache.annotation.EnableCaching;
+import org.springframework.cache.caffeine.CaffeineCache;
+import org.springframework.cache.support.SimpleCacheManager;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 
-/**
- * @Cacheable on findBySymbol (cache name "instruments").
- * TTL configured in application.yml (caffeine spec).
- *
- * Symbol lookup is hot — most requests touch the cache, not the DB.
- */
-@Service
-public class InstrumentService {
+import java.util.List;
+import java.util.concurrent.TimeUnit;
 
-    private final InstrumentRepository repo;
+@Configuration
+@EnableCaching
+public class CacheConfig {
 
-    public InstrumentService(InstrumentRepository repo) { this.repo = repo; }
+    @Bean
+    public CacheManager cacheManager() {
 
-    @Cacheable("instruments")
-    public Instrument findBySymbol(String symbol) {
-        return repo.findBySymbol(symbol)
-                .orElseThrow(() -> new InvalidTradeException("Unknown instrument symbol: " + symbol));
+        CaffeineCache instruments = new CaffeineCache(
+                "instruments",
+                Caffeine.newBuilder()
+                        .maximumSize(500)
+                        .expireAfterWrite(5, TimeUnit.MINUTES)
+                        .recordStats()
+                        .build()
+        );
+
+        CaffeineCache counterparties = new CaffeineCache(
+                "counterparties",
+                Caffeine.newBuilder()
+                        .maximumSize(200)
+                        .expireAfterWrite(1, TimeUnit.MINUTES)
+                        .recordStats()
+                        .build()
+        );
+
+        SimpleCacheManager cacheManager = new SimpleCacheManager();
+        cacheManager.setCaches(List.of(
+                instruments,
+                counterparties
+        ));
+
+        return cacheManager;
     }
 }
