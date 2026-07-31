@@ -159,6 +159,26 @@ live in HttpOnly cookies for 7 days.
 
 ---
 
+## API Versioning
+
+All endpoints are served under `/api/v1/...` (the `v1` prefix is baked into
+each controller's `@RequestMapping`, combined with the `/api` context-path
+from `application.yml`).
+
+**Breaking changes get a new version segment** (e.g. `/api/v2/...`) rather
+than mutating `/api/v1/...` in place. The old version keeps working
+until its published `Sunset` date.
+
+Deprecated endpoints are marked with `@Deprecated` in code and return:
+- `HTTP 410 Gone`
+- `Deprecation: true` header
+- `Sunset: <date>` header — when the endpoint will stop working
+- `Link: <successor-url>; rel="successor-version"` header — pointing callers
+  to the replacement endpoint
+
+Example: `GET /api/v1/trades/old-search` demonstrates this pattern.
+
+
 ## Deploy to the demo laptop (Day 10)
 
 The deploy story is **GitHub Actions builds + pushes Docker images to GHCR;
@@ -257,3 +277,6 @@ A 20-minute end-to-end walkthrough:
 ---
 
 ## Good luck — and ask your instructors anything 🏦
+
+
+
