@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report.xsd" version="3.0.2" name="com.dbtraining.reconx.model.ReconciliationRuleTest" time="0.437" tests="7" errors="0" skipped="0" failures="0">
+<testsuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report.xsd" version="3.0.2" name="com.dbtraining.reconx.service.ReconciliationEngineTest" time="0.105" tests="4" errors="0" skipped="0" failures="0">
   <properties>
     <property name="java.specification.version" value="21"/>
     <property name="sun.cpu.isalist" value="amd64"/>
@@ -59,11 +59,8 @@
     <property name="sun.io.unicode.encoding" value="UnicodeLittle"/>
     <property name="java.class.version" value="65.0"/>
   </properties>
-  <testcase name="matches(ReconciliationRule, BigDecimal, BigDecimal, BigDecimal, BigDecimal, boolean)[1]" classname="com.dbtraining.reconx.model.ReconciliationRuleTest" time="0.122"/>
-  <testcase name="matches(ReconciliationRule, BigDecimal, BigDecimal, BigDecimal, BigDecimal, boolean)[2]" classname="com.dbtraining.reconx.model.ReconciliationRuleTest" time="0.003"/>
-  <testcase name="matches(ReconciliationRule, BigDecimal, BigDecimal, BigDecimal, BigDecimal, boolean)[3]" classname="com.dbtraining.reconx.model.ReconciliationRuleTest" time="0.01"/>
-  <testcase name="matches(ReconciliationRule, BigDecimal, BigDecimal, BigDecimal, BigDecimal, boolean)[4]" classname="com.dbtraining.reconx.model.ReconciliationRuleTest" time="0.013"/>
-  <testcase name="matches(ReconciliationRule, BigDecimal, BigDecimal, BigDecimal, BigDecimal, boolean)[5]" classname="com.dbtraining.reconx.model.ReconciliationRuleTest" time="0.002"/>
-  <testcase name="matches(ReconciliationRule, BigDecimal, BigDecimal, BigDecimal, BigDecimal, boolean)[6]" classname="com.dbtraining.reconx.model.ReconciliationRuleTest" time="0.01"/>
-  <testcase name="matches(ReconciliationRule, BigDecimal, BigDecimal, BigDecimal, BigDecimal, boolean)[7]" classname="com.dbtraining.reconx.model.ReconciliationRuleTest" time="0.011"/>
+  <testcase name="testReconcile_missingCounterpartyTrade_returnsBreak" classname="com.dbtraining.reconx.service.ReconciliationEngineTest" time="0.061"/>
+  <testcase name="testReconcile_exactMatch_returnsMatched" classname="com.dbtraining.reconx.service.ReconciliationEngineTest" time="0.026"/>
+  <testcase name="testReconcile_priceTolerance_withinThreshold" classname="com.dbtraining.reconx.service.ReconciliationEngineTest" time="0.002"/>
+  <testcase name="testReconcile_emptyInternal_returnsEmpty" classname="com.dbtraining.reconx.service.ReconciliationEngineTest" time="0.001"/>
 </testsuite>
