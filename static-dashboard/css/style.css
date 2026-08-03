@@ -77,7 +77,9 @@ body {
 .stat-card--warn { border-color: var(--color-warning); }
 .stat-card h3    { margin: 0; font-size: 13px; opacity: 0.7; }
 .stat-card p     { margin: var(--space-2) 0 0; font-size: 22px; font-weight: 700; }
-
+.sse-status { font-size: 12px; padding: 2px 8px; border-radius: var(--radius); margin-left: var(--space-2); }
+.sse-status--live { background: var(--color-success); color: #fff; }
+.sse-status--reconnecting { background: var(--color-warning); color: #1a1a1a; }
 /* TICKET-ADV103 / ADV104 — live feed slide-in */
 #trade-feed { display: flex; flex-direction: column; gap: var(--space-2); margin-top: var(--space-3); max-height: 50vh; overflow-y: auto; }
 .trade-card { background: var(--color-surface); border: 1px solid var(--color-border); border-radius: var(--radius); padding: var(--space-2) var(--space-3); animation: slide-in 0.3s ease-out; }
