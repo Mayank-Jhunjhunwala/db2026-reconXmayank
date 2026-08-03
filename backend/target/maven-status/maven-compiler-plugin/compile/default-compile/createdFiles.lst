@@ -34,6 +34,7 @@ com\dbtraining\reconx\exception\ReconciliationMismatchException.class
 com\dbtraining\reconx\model\DerivativeTrade$Builder.class
 com\dbtraining\reconx\model\FXTrade$Builder.class
 com\dbtraining\reconx\kafka\KafkaTopicsConfig.class
+com\dbtraining\reconx\dto\LoginRequest.class
 com\dbtraining\reconx\model\TradeFactory.class
 com\dbtraining\reconx\service\TradeAnalyticsService.class
 com\dbtraining\reconx\dto\TradeMapper.class
