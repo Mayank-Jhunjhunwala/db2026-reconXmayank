@@ -112,7 +112,11 @@
             <groupId>org.springframework.kafka</groupId>
             <artifactId>spring-kafka</artifactId>
         </dependency>
-
+        <dependency>
+            <groupId>com.dbtraining.reconx</groupId>
+            <artifactId>recon-audit-starter</artifactId>
+            <version>1.0.0</version>
+        </dependency>
         <!-- Observability (ADV083-ADV097) -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
