@@ -1,5 +1,6 @@
 // File: static-dashboard/js/sse.js
 // TICKET-ADV104 — EventSource live feed with prepend + slide-in animation.
+// TICKET-ADV105 — SSE handler with prepend-and-animate, escaping, and DOM cap.
 
 (function () {
   const FEED_EL = document.getElementById('trade-feed');
@@ -16,17 +17,53 @@
     badge.className = variant;
   }
 
-  function prepend(trade) {
-    const el = document.createElement('article');
-    el.className = 'trade-card trade-card--new trade-card--' + trade.status.toLowerCase();
-    el.innerHTML = `
-      <strong>${trade.tradeRef}</strong>
-      <span> ${trade.symbol} </span>
-      <span> qty=${trade.qty} </span>
-      <span> price=${trade.price} </span>
-      <span> [${trade.status}]</span>`;
-    FEED_EL.prepend(el);
+  // ---- TICKET-ADV105: safe rendering helpers ----
+
+  function escapeHtml(s) {
+    return String(s)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#39;');
   }
+
+  const formatQty = new Intl.NumberFormat('en-US');
+  const formatPrice = new Intl.NumberFormat('en-US', {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 4,
+  });
+
+  function prependTradeRow(trade) {
+    let statusModifier = '';
+    // NOTE: confirm these match your backend's actual Trade.status values
+    // (adjust if your enum uses e.g. BREAK/PENDING instead of UNMATCHED)
+    if (trade.status === 'MATCHED') statusModifier = 'trade-card--matched';
+    else if (trade.status === 'UNMATCHED' || trade.status === 'BREAK') statusModifier = 'trade-card--break';
+    else if (trade.status === 'PENDING') statusModifier = 'trade-card--pending';
+
+    const row = document.createElement('article');
+    row.className = 'trade-card ' + statusModifier + ' trade-card--new';
+    row.innerHTML = `
+      <header class="trade-card__header">
+        <strong>${escapeHtml(trade.tradeRef)}</strong>
+        <span>${escapeHtml(trade.status)}</span>
+      </header>
+      <div class="trade-card__body">
+        <span>${escapeHtml(trade.symbol)}</span>
+        <span>qty=${formatQty.format(trade.qty)}</span>
+        <span>price=${formatPrice.format(trade.price)}</span>
+      </div>`;
+
+    FEED_EL.prepend(row);
+    setTimeout(() => row.classList.remove('trade-card--new'), 500);
+
+    while (FEED_EL.children.length > 50) {
+      FEED_EL.lastElementChild.remove();
+    }
+  }
+
+  // ---- TICKET-ADV104: EventSource connection ----
 
   function connect() {
     sse = new EventSource(STREAM_URL);
@@ -39,7 +76,7 @@
     sse.onmessage = (event) => {
       try {
         const trade = JSON.parse(event.data);
-        prepend(trade);
+        prependTradeRow(trade);
       } catch (err) {
         console.error('Failed to parse SSE trade event', err);
       }
