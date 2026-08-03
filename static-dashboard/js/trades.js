@@ -24,7 +24,7 @@
       <tr>
         <td>${escapeHtml(r.tradeRef)}</td>
         <td>${escapeHtml(r.symbol)}</td>
-        <td>${escapeHtml(r.qty)}</td>
+        <td>${escapeHtml(r.quantity)}</td>
         <td>${escapeHtml(r.price)}</td>
         <td>${escapeHtml(r.status)}</td>
       </tr>`).join('');
@@ -32,61 +32,48 @@
 
   // ---- Sorting ----
 
-  function clearOtherSortIndicators(activeTh) {
-    HEADERS.forEach(th => {
-      if (th !== activeTh) th.removeAttribute('aria-sort');
+  HEADERS.forEach(th => {
+    th.addEventListener('click', (e) => {
+      if (e.target.classList.contains('resize-handle')) return; // ignore resize clicks
+
+      const col = th.dataset.col;
+      const type = th.dataset.type || 'string';
+      const dir = th.getAttribute('aria-sort') === 'ascending' ? 'descending' : 'ascending';
+
+      // clear all, set this one
+      HEADERS.forEach(o => o.removeAttribute('aria-sort'));
+      th.setAttribute('aria-sort', dir);
+
+      const mult = dir === 'ascending' ? 1 : -1;
+      rows.sort((a, b) => {
+        const av = a[col], bv = b[col];
+        if (type === 'number') return (Number(av) - Number(bv)) * mult;
+        return String(av).localeCompare(String(bv)) * mult;
+      });
+
+      renderRows();
     });
-  }
-
-  function handleHeaderClick(e) {
-    if (e.target.classList.contains('resize-handle')) return;
-
-    const th = e.currentTarget;
-    const col = th.dataset.col;
-    const type = th.dataset.type;
-
-    const currentDir = th.dataset.dir === 'asc' ? 'desc' : 'asc';
-    th.dataset.dir = currentDir;
-    const multiplier = currentDir === 'asc' ? 1 : -1;
-
-    clearOtherSortIndicators(th);
-    th.setAttribute('aria-sort', currentDir === 'asc' ? 'ascending' : 'descending');
-
-    rows.sort((a, b) => {
-      if (type === 'number') {
-        return (Number(a[col]) - Number(b[col])) * multiplier;
-      }
-      return String(a[col]).localeCompare(String(b[col])) * multiplier;
-    });
-
-    renderRows();
-  }
-
-  HEADERS.forEach(th => th.addEventListener('click', handleHeaderClick));
+  });
 
   // ---- Column resize ----
 
-  function handleResizeMousedown(e) {
-    const handle = e.target;
-    const th = handle.closest('th');
-    const startX = e.clientX;
-    const startWidth = th.offsetWidth;
-
-    function onMouseMove(moveEvent) {
-      th.style.width = (startWidth + moveEvent.clientX - startX) + 'px';
-    }
-
-    function onMouseUp() {
-      document.removeEventListener('mousemove', onMouseMove);
-      document.removeEventListener('mouseup', onMouseUp);
-    }
-
-    document.addEventListener('mousemove', onMouseMove);
-    document.addEventListener('mouseup', onMouseUp);
-  }
-
   TABLE_EL.querySelectorAll('.resize-handle').forEach(handle => {
-    handle.addEventListener('mousedown', handleResizeMousedown);
+    handle.addEventListener('mousedown', (e) => {
+      e.preventDefault();
+      const th = handle.closest('th');
+      const startX = e.clientX;
+      const startWidth = th.offsetWidth;
+
+      // Listen on DOCUMENT so the drag survives leaving the handle.
+      function onMove(ev) { th.style.width = (startWidth + ev.clientX - startX) + 'px'; }
+      function onUp() {
+        document.removeEventListener('mousemove', onMove);
+        document.removeEventListener('mouseup', onUp);
+      }
+
+      document.addEventListener('mousemove', onMove);
+      document.addEventListener('mouseup', onUp);
+    });
   });
 
   // ---- Initial data load ----
