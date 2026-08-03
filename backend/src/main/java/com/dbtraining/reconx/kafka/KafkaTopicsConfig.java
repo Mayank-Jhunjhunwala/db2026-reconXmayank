@@ -40,5 +40,28 @@ import org.springframework.context.annotation.Profile;
 @Profile("!dev & !test")
 public class KafkaTopicsConfig {
 
-    // TODO(TICKET-ADV128 + ADV134): declare the 4 NewTopic @Beans — see comments above.
+    public static final String TRADE_EVENTS = "trade-events";
+    public static final String TRADE_EVENTS_DLQ = "trade-events-dlq";
+    public static final String RECON_RESULTS = "recon-results";
+    public static final String SYSTEM_ALERTS = "system-alerts";
+
+    @org.springframework.context.annotation.Bean
+    public org.apache.kafka.clients.admin.NewTopic tradeEvents() {
+        return org.springframework.kafka.config.TopicBuilder.name(TRADE_EVENTS).partitions(3).replicas(1).build();
+    }
+
+    @org.springframework.context.annotation.Bean
+    public org.apache.kafka.clients.admin.NewTopic reconResults() {
+        return org.springframework.kafka.config.TopicBuilder.name(RECON_RESULTS).partitions(2).replicas(1).build();
+    }
+
+    @org.springframework.context.annotation.Bean
+    public org.apache.kafka.clients.admin.NewTopic systemAlerts() {
+        return org.springframework.kafka.config.TopicBuilder.name(SYSTEM_ALERTS).partitions(1).replicas(1).build();
+    }
+
+    @org.springframework.context.annotation.Bean
+    public org.apache.kafka.clients.admin.NewTopic tradeEventsDlq() {
+        return org.springframework.kafka.config.TopicBuilder.name(TRADE_EVENTS_DLQ).partitions(3).replicas(1).build();
+    }
 }

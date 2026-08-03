@@ -41,5 +41,14 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class KafkaErrorHandlerConfig {
 
-    // TODO(TICKET-ADV134 + ADV135): define the errorHandler @Bean — see comments above.
+    @org.springframework.context.annotation.Bean
+    public org.springframework.kafka.listener.DefaultErrorHandler errorHandler(org.springframework.kafka.core.KafkaTemplate<Object,Object> template) {
+        org.springframework.kafka.listener.DeadLetterPublishingRecoverer recoverer = new org.springframework.kafka.listener.DeadLetterPublishingRecoverer(
+            template,
+            (org.apache.kafka.clients.consumer.ConsumerRecord<?,?> rec, Exception ex) ->
+                new org.apache.kafka.common.TopicPartition(rec.topic() + "-dlq", rec.partition()));
+        org.springframework.util.backoff.ExponentialBackOff backoff = new org.springframework.util.backoff.ExponentialBackOff(1000L, 2.0);
+        backoff.setMaxAttempts(3);
+        return new org.springframework.kafka.listener.DefaultErrorHandler(recoverer, backoff);
+    }
 }

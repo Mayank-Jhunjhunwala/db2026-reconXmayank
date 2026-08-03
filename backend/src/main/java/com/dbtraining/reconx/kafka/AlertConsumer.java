@@ -31,7 +31,8 @@ public class AlertConsumer {
 
     private static final Logger log = LoggerFactory.getLogger(AlertConsumer.class);
 
+    @org.springframework.kafka.annotation.KafkaListener(topics = "system-alerts", groupId = "alert-service", containerFactory = "systemAlertListenerContainerFactory")
     public void onAlert(String payload) {
-        throw new UnsupportedOperationException("TICKET-ADV133");
+        log.warn("ALERT: {}", payload);
     }
 }

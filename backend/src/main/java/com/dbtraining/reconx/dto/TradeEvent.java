@@ -29,4 +29,14 @@ public record TradeEvent(
     public enum EventType {
         TRADE_CREATED, TRADE_UPDATED, TRADE_CANCELLED
     }
+
+    public static TradeEvent created(String tradeRef, com.fasterxml.jackson.databind.JsonNode after) {
+        return new TradeEvent(UUID.randomUUID(), tradeRef, EventType.TRADE_CREATED, Instant.now(), "system", null, after == null ? null : after.toString());
+    }
+    public static TradeEvent updated(String tradeRef, com.fasterxml.jackson.databind.JsonNode before, com.fasterxml.jackson.databind.JsonNode after) {
+        return new TradeEvent(UUID.randomUUID(), tradeRef, EventType.TRADE_UPDATED, Instant.now(), "system", before == null ? null : before.toString(), after == null ? null : after.toString());
+    }
+    public static TradeEvent cancelled(String tradeRef, com.fasterxml.jackson.databind.JsonNode before) {
+        return new TradeEvent(UUID.randomUUID(), tradeRef, EventType.TRADE_CANCELLED, Instant.now(), "system", before == null ? null : before.toString(), null);
+    }
 }

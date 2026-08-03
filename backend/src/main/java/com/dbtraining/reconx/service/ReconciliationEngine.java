@@ -83,4 +83,12 @@ public class ReconciliationEngine {
         //   omit a case and the build fails.
         throw new UnsupportedOperationException("TICKET-ADV018");
     }
+
+    public void scheduleRecon(String tradeRef) {
+        // Mock method for Day 9 Kafka tickets
+    }
+
+    public void cancelPendingRecon(String tradeRef) {
+        // Mock method for Day 9 Kafka tickets
+    }
 }

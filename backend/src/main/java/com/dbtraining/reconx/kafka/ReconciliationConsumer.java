@@ -35,7 +35,20 @@ public class ReconciliationConsumer {
 
     private static final Logger log = LoggerFactory.getLogger(ReconciliationConsumer.class);
 
+    private final com.dbtraining.reconx.service.ReconciliationEngine reconEngine;
+
+    public ReconciliationConsumer(com.dbtraining.reconx.service.ReconciliationEngine reconEngine) {
+        this.reconEngine = reconEngine;
+    }
+
+    @org.springframework.kafka.annotation.KafkaListener(topics = "trade-events", groupId = "recon-service", containerFactory = "tradeEventListenerContainerFactory")
     public void onTradeEvent(TradeEvent event) {
-        throw new UnsupportedOperationException("TICKET-ADV131");
+        log.info("Recon-trigger received eventId={} ref={} type={}",
+                 event.eventId(), event.tradeRef(), event.eventType());
+        if (event.eventType() == TradeEvent.EventType.TRADE_CANCELLED) {
+            reconEngine.cancelPendingRecon(event.tradeRef());
+        } else {
+            reconEngine.scheduleRecon(event.tradeRef());
+        }
     }
 }
