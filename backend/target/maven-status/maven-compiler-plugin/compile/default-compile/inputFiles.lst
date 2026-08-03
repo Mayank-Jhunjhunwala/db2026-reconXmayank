@@ -35,6 +35,8 @@ C:\Users\Admin\Desktop\test\db2026-reconXmayank\backend\src\main\java\com\dbtrai
 C:\Users\Admin\Desktop\test\db2026-reconXmayank\backend\src\main\java\com\dbtraining\reconx\model\TradeRef.java
 C:\Users\Admin\Desktop\test\db2026-reconXmayank\backend\src\main\java\com\dbtraining\reconx\model\TradeType.java
 C:\Users\Admin\Desktop\test\db2026-reconXmayank\backend\src\main\java\com\dbtraining\reconx\observability\DatabaseHealthIndicator.java
+C:\Users\Admin\Desktop\test\db2026-reconXmayank\backend\src\main\java\com\dbtraining\reconx\observability\KafkaHealthIndicator.java
+C:\Users\Admin\Desktop\test\db2026-reconXmayank\backend\src\main\java\com\dbtraining\reconx\observability\MdcFilter.java
 C:\Users\Admin\Desktop\test\db2026-reconXmayank\backend\src\main\java\com\dbtraining\reconx\observability\TradeMetrics.java
 C:\Users\Admin\Desktop\test\db2026-reconXmayank\backend\src\main\java\com\dbtraining\reconx\ReconxApplication.java
 C:\Users\Admin\Desktop\test\db2026-reconXmayank\backend\src\main\java\com\dbtraining\reconx\repository\AppUserRepository.java
