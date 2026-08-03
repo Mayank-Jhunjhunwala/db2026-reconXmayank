@@ -1,5 +1,7 @@
 com\dbtraining\reconx\service\TradeAnalyticsService$NotionalSummary.class
 com\dbtraining\reconx\dto\ReconRunRequest.class
+com\dbtraining\reconx\controller\AuditController.class
+com\dbtraining\reconx\ReconxApplication.class
 com\dbtraining\reconx\repository\entity\Instrument.class
 com\dbtraining\reconx\exception\InvalidTradeException.class
 com\dbtraining\reconx\dto\TradeEvent$EventType.class
@@ -21,12 +23,15 @@ com\dbtraining\reconx\observability\DatabaseHealthIndicator.class
 com\dbtraining\reconx\security\JwtTokenProvider.class
 com\dbtraining\reconx\kafka\ReconciliationConsumer.class
 com\dbtraining\reconx\model\BondTrade$Builder.class
+com\dbtraining\reconx\controller\TradeController.class
 com\dbtraining\reconx\model\EquityTrade.class
 com\dbtraining\reconx\model\TradeType.class
 com\dbtraining\reconx\repository\entity\AppUser.class
 com\dbtraining\reconx\repository\TradeRepository.class
 com\dbtraining\reconx\service\InstrumentService.class
+com\dbtraining\reconx\model\TradeFactory$1.class
 com\dbtraining\reconx\dto\ReconResult$Status.class
+com\dbtraining\reconx\controller\ReconController.class
 com\dbtraining\reconx\repository\entity\AuditLogEntry.class
 com\dbtraining\reconx\dto\ReconResult.class
 com\dbtraining\reconx\repository\TradeSpecifications.class
@@ -34,6 +39,8 @@ com\dbtraining\reconx\exception\ReconciliationMismatchException.class
 com\dbtraining\reconx\model\DerivativeTrade$Builder.class
 com\dbtraining\reconx\model\FXTrade$Builder.class
 com\dbtraining\reconx\kafka\KafkaTopicsConfig.class
+com\dbtraining\reconx\controller\AuthController.class
+com\dbtraining\reconx\dto\LoginRequest.class
 com\dbtraining\reconx\model\TradeFactory.class
 com\dbtraining\reconx\service\TradeAnalyticsService.class
 com\dbtraining\reconx\dto\TradeMapper.class
@@ -43,6 +50,7 @@ com\dbtraining\reconx\model\ReconciliationRule.class
 com\dbtraining\reconx\dto\TradeMapperImpl.class
 com\dbtraining\reconx\dto\LoginResponse.class
 com\dbtraining\reconx\dto\TradeEvent.class
+com\dbtraining\reconx\config\OpenApiConfig.class
 com\dbtraining\reconx\exception\TradeNotFoundException.class
 com\dbtraining\reconx\kafka\AlertConsumer.class
 com\dbtraining\reconx\exception\GlobalExceptionHandler.class
